@@ -1,0 +1,40 @@
+
+source1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+starcatcher-right
+  rotate: false
+  xy: 2, 2
+  size: 329, 197
+  orig: 329, 197
+  offset: 0, 0
+  index: -1
+starcatcher-on
+  rotate: false
+  xy: 2, 201
+  size: 329, 197
+  orig: 329, 197
+  offset: 0, 0
+  index: -1
+starcatcher
+  rotate: false
+  xy: 2, 201
+  size: 329, 197
+  orig: 329, 197
+  offset: 0, 0
+  index: -1
+starcatcher-off
+  rotate: false
+  xy: 2, 400
+  size: 329, 197
+  orig: 329, 197
+  offset: 0, 0
+  index: -1
+starcatcher-left
+  rotate: false
+  xy: 2, 599
+  size: 329, 197
+  orig: 329, 197
+  offset: 0, 0
+  index: -1
