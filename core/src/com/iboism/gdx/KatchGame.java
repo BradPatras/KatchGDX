@@ -34,7 +34,7 @@ public class KatchGame extends ApplicationAdapter implements InputProcessor {
 	float game_height;
 	float game_width;
 
-	float thrust_accel = 1f;
+	float thrust_accel = 5f;
 
 	/* SHIP STUFF
 
