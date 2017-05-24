@@ -63,19 +63,19 @@ public class KatchGame extends ApplicationAdapter implements InputProcessor {
 		Gdx.input.setInputProcessor(this);
 		batch = new SpriteBatch();
 		assets = new AssetManager();
-		assets.load("kship.pack", TextureAtlas.class);
+		assets.load("kship2.pack", TextureAtlas.class);
 		assets.finishLoading();
 		/*
 		assign sprites from the texture atlas
 		 */
 
-		kshipAtlas = assets.get("kship.pack");
+		kshipAtlas = assets.get("kship2.pack");
 		kshipSprites = kshipAtlas.getRegions();
 
 		sprite_r = kshipSprites.get(0);
-		sprite_lr = kshipSprites.get(1);
-		sprite_n = kshipSprites.get(3);
-		sprite_l = kshipSprites.get(4);
+		sprite_n = kshipSprites.get(1);
+		sprite_l = kshipSprites.get(2);
+		sprite_lr = kshipSprites.get(3);
 
 		game_height = Gdx.graphics.getHeight();
 		game_width = Gdx.graphics.getWidth();
@@ -85,7 +85,7 @@ public class KatchGame extends ApplicationAdapter implements InputProcessor {
 		/*
 		generate dimensions based on screen size
 		 */
-		kship_width = Gdx.graphics.getWidth()/5f;
+		kship_width = Gdx.graphics.getWidth()/6f;
 		kship_height = kship_width * .6f;
 
 		kship_x = Gdx.graphics.getWidth()/2;
