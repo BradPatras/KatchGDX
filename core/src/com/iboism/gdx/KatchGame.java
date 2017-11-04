@@ -15,18 +15,15 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Array;
 
 public class KatchGame extends ApplicationAdapter implements InputProcessor {
-	private AssetManager assets;SpriteBatch batch;
+	private SpriteBatch batch;
 
 	private boolean isLeftThusting;
 	private boolean isRightThrusting;
 
+	private Ship kship = new Ship();
+
 	private TextureAtlas kshipAtlas;
 	private Array<TextureAtlas.AtlasRegion> kshipSprites;
-	private TextureAtlas.AtlasRegion sprite_lr;
-	private TextureAtlas.AtlasRegion sprite_l;
-	private TextureAtlas.AtlasRegion sprite_r;
-	private TextureAtlas.AtlasRegion sprite_n;
-	private TextureAtlas.AtlasRegion sprite_current;
 	private float elapsed;
 	OrthographicCamera camera;
 
@@ -35,47 +32,11 @@ public class KatchGame extends ApplicationAdapter implements InputProcessor {
 	float game_width;
 
 	float thrust_accel = 5f;
-
-	/* SHIP STUFF
-
-	Dimensions
-	 */
-	float kship_height;
-	float kship_width;
-
-	/*
-	Position
-	 */
-	float kship_x;
-	float kship_y;
-	float kship_r;
-
-	/*
-	Velocity
-	 */
-	float kship_xv;
-	float kship_yv;
-	float kship_rv;
-
 	
 	@Override
 	public void create () {
 		Gdx.input.setInputProcessor(this);
 		batch = new SpriteBatch();
-		assets = new AssetManager();
-		assets.load("kship2.pack", TextureAtlas.class);
-		assets.finishLoading();
-		/*
-		assign sprites from the texture atlas
-		 */
-
-		kshipAtlas = assets.get("kship2.pack");
-		kshipSprites = kshipAtlas.getRegions();
-
-		sprite_r = kshipSprites.get(0);
-		sprite_n = kshipSprites.get(1);
-		sprite_l = kshipSprites.get(2);
-		sprite_lr = kshipSprites.get(3);
 
 		game_height = Gdx.graphics.getHeight();
 		game_width = Gdx.graphics.getWidth();
@@ -85,15 +46,11 @@ public class KatchGame extends ApplicationAdapter implements InputProcessor {
 		/*
 		generate dimensions based on screen size
 		 */
-		kship_width = Gdx.graphics.getWidth()/6f;
-		kship_height = kship_width * .6f;
+		kship.setWidth(Gdx.graphics.getWidth() / 6f);
+		kship.setHeight(kship.getWidth() * .6f);
 
-		kship_x = Gdx.graphics.getWidth()/2;
-		kship_y = Gdx.graphics.getHeight()/2;
-
-
-
-
+		kship.setX(Gdx.graphics.getWidth() / 2);
+		kship.setY(Gdx.graphics.getHeight() / 2);
 
 	}
 
@@ -104,35 +61,35 @@ public class KatchGame extends ApplicationAdapter implements InputProcessor {
 
 		updateShip(Gdx.graphics.getDeltaTime());
 		batch.begin();
-		batch.draw(sprite_current,kship_x,kship_y,kship_width/2f,kship_height/2f,kship_width,kship_height,1,1,kship_r);
+		batch.draw(kship.getSprite_current(), kship.getX(), kship.getY(), kship.getWidth() /2f, kship.getHeight() /2f, kship.getWidth(), kship.getHeight(),1,1, kship.getR());
 		batch.end();
 	}
 
 
 	private void updateShip(float deltaTime){
-		float radians = kship_r * ((float) Math.PI) / 180f;
+		float radians = kship.getR() * ((float) Math.PI) / 180f;
 		float thrustdx = 0;
 		float thrustdy = 0;
-		sprite_current = sprite_n;
+		kship.setSprite_current(kship.getSprite_n());
 
 		if (isRightThrusting && isLeftThusting){
 			thrustdx = -thrust_accel * ((float) Math.sin(radians));
 			thrustdy = (thrust_accel * ((float) Math.cos(radians)));
-			sprite_current = sprite_lr;
+			kship.setSprite_current(kship.getSprite_lr());
 		} else if (isLeftThusting || isRightThrusting){
-			sprite_current = (isLeftThusting) ? sprite_l : sprite_r;
-			kship_rv += ((isLeftThusting) ? -thrust_accel : thrust_accel)*deltaTime; //calculate new rotational velocity
+			kship.setSprite_current((isLeftThusting) ? kship.getSprite_l() : kship.getSprite_r());
+			kship.setRv(kship.getRv() + ((isLeftThusting) ? -thrust_accel : thrust_accel) * deltaTime); //calculate new rotational velocity
 			thrustdx = -(thrust_accel / 7f) * ((float) Math.sin(radians));
 			thrustdy = ((thrust_accel / 7f) * ((float) Math.cos(radians)));
 		}
 
-		kship_xv += thrustdx * deltaTime; //calculate new horizontal velocity
-		kship_yv += thrustdy * deltaTime; //calculate new vertical velocity
+		kship.setXv(kship.getXv() + thrustdx * deltaTime); //calculate new horizontal velocity
+		kship.setYv(kship.getYv() + thrustdy * deltaTime); //calculate new vertical velocity
 
 		//Apply new velocities to ship position and rotation
-		kship_y += kship_yv;
-		kship_x += kship_xv;
-		kship_r += kship_rv;
+		kship.setY(kship.getY() + kship.getYv());
+		kship.setX(kship.getX() + kship.getXv());
+		kship.setR(kship.getR() + kship.getRv());
 
 	}
 
