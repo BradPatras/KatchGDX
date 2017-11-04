@@ -11,16 +11,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Array;
 
 public class KatchGame extends ApplicationAdapter implements InputProcessor {
 	private SpriteBatch batch;
 
-	private boolean isLeftThusting;
-	private boolean isRightThrusting;
+	private boolean isLeftThusting = false;
+	private boolean isRightThrusting = false;
 
-	private Ship kship = new Ship();
+	private Ship kship;
 
 	private TextureAtlas kshipAtlas;
 	private Array<TextureAtlas.AtlasRegion> kshipSprites;
@@ -46,12 +47,12 @@ public class KatchGame extends ApplicationAdapter implements InputProcessor {
 		/*
 		generate dimensions based on screen size
 		 */
-		kship.setWidth(Gdx.graphics.getWidth() / 6f);
-		kship.setHeight(kship.getWidth() * .6f);
+		float width = Gdx.graphics.getWidth() / 6f;
+		float height = width * .6f;
 
-		kship.setX(Gdx.graphics.getWidth() / 2);
-		kship.setY(Gdx.graphics.getHeight() / 2);
-
+		kship = new Ship("kship2.pack", new Vector2(width, height));
+		kship.setPos(new Vector3(Gdx.graphics.getWidth() / 2,Gdx.graphics.getHeight() / 2, 0));
+		kship.setAccel(thrust_accel);
 	}
 
 	@Override
@@ -59,38 +60,36 @@ public class KatchGame extends ApplicationAdapter implements InputProcessor {
 		Gdx.gl.glClearColor(.5f, .5f, .5f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		updateShip(Gdx.graphics.getDeltaTime());
+		kship.update(Gdx.graphics.getDeltaTime());
 		batch.begin();
-		batch.draw(kship.getSprite_current(), kship.getX(), kship.getY(), kship.getWidth() /2f, kship.getHeight() /2f, kship.getWidth(), kship.getHeight(),1,1, kship.getR());
+		batch.draw(kship.getView(), kship.getPos().x, kship.getPos().y, kship.getSize().x /2f, kship.getSize().y /2f, kship.getSize().x, kship.getSize().y,1,1, kship.getPosition().z);
 		batch.end();
 	}
 
-
-	private void updateShip(float deltaTime){
-		float radians = kship.getR() * ((float) Math.PI) / 180f;
-		float thrustdx = 0;
-		float thrustdy = 0;
-		kship.setSprite_current(kship.getSprite_n());
-
-		if (isRightThrusting && isLeftThusting){
-			thrustdx = -thrust_accel * ((float) Math.sin(radians));
-			thrustdy = (thrust_accel * ((float) Math.cos(radians)));
-			kship.setSprite_current(kship.getSprite_lr());
-		} else if (isLeftThusting || isRightThrusting){
-			kship.setSprite_current((isLeftThusting) ? kship.getSprite_l() : kship.getSprite_r());
-			kship.setRv(kship.getRv() + ((isLeftThusting) ? -thrust_accel : thrust_accel) * deltaTime); //calculate new rotational velocity
-			thrustdx = -(thrust_accel / 7f) * ((float) Math.sin(radians));
-			thrustdy = ((thrust_accel / 7f) * ((float) Math.cos(radians)));
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		if (screenX < (Gdx.graphics.getWidth()/2)){
+			// Touched left side of screen
+			isLeftThusting = true;
+		} else {
+			// Touched right side of screen
+			isRightThrusting = true;
 		}
+		kship.receiveInput(new ControllerInput(isLeftThusting,isRightThrusting,false));
+		return false;
+	}
 
-		kship.setXv(kship.getXv() + thrustdx * deltaTime); //calculate new horizontal velocity
-		kship.setYv(kship.getYv() + thrustdy * deltaTime); //calculate new vertical velocity
-
-		//Apply new velocities to ship position and rotation
-		kship.setY(kship.getY() + kship.getYv());
-		kship.setX(kship.getX() + kship.getXv());
-		kship.setR(kship.getR() + kship.getRv());
-
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if (screenX < (Gdx.graphics.getWidth()/2)){
+			// Stopped touching left side of screen
+			isLeftThusting = false;
+		} else {
+			// Stopped touching right side of screen
+			isRightThrusting = false;
+		}
+		kship.receiveInput(new ControllerInput(isLeftThusting,isRightThrusting,false));
+		return false;
 	}
 
 	@Override
@@ -105,30 +104,6 @@ public class KatchGame extends ApplicationAdapter implements InputProcessor {
 
 	@Override
 	public boolean keyTyped(char character) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if (screenX < (Gdx.graphics.getWidth()/2)){
-			// Touched left side of screen
-			isLeftThusting = true;
-		} else {
-			// Touched right side of screen
-			isRightThrusting = true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (screenX < (Gdx.graphics.getWidth()/2)){
-			// Stopped touching left side of screen
-			isLeftThusting = false;
-		} else {
-			// Stopped touching right side of screen
-			isRightThrusting = false;
-		}
 		return false;
 	}
 

@@ -1,6 +1,7 @@
 package com.iboism.gdx
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 
 /**
@@ -8,24 +9,27 @@ import com.badlogic.gdx.math.Vector3
  */
 interface Viewable {
     fun load(spriteSheet: String)
-    fun getView(): TextureAtlas.AtlasRegion?
+    fun getView(): TextureAtlas.AtlasRegion
 }
 
 interface Controllable {
-    fun processInput(input: ControllerInput)
+    fun receiveInput(input: ControllerInput)
 }
 
 interface Dynamic {
-    fun update()
+    fun update(delta: Float)
 }
 
 interface Plotted {
     fun getPosition(): Vector3
+    fun setPosition(position: Vector3)
+    fun getSize(): Vector2
 }
 
 interface Motile {
     fun getVelocity(): Vector3
-    fun getAcceleration(): Vector3
+    fun setVelocity(velocity: Vector3)
+    fun setAcceleration(acceleration: Float)
 }
 
 interface Mortal {
