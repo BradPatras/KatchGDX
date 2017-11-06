@@ -94,6 +94,7 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile  {
     }
 
     private fun thrustVectorFor(input: ControllerInput, thrustAccel: Float): Vector3 {
+        if (!input.left && !input.right) return Vector3()
         val radians = getPosition().z * Math.PI.toFloat() / 180f
         var tv = Vector3()
         if (input.right && input.left) {
