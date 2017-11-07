@@ -20,12 +20,12 @@ import java.util.ArrayList
 class KatchGame : ApplicationAdapter(), InputProcessor {
     private var batch: SpriteBatch? = null
 
+    //stuff that shouldn't be here
     private var isLeftThusting = false
     private var isRightThrusting = false
+    private lateinit var particleAtlas: TextureAtlas
 
-    private val THRUST_PARTICLE_FILENAME = "thrust.pack"
-
-    private val actors: ArrayList<Any>? = null
+    private val actors = ArrayList<Any>()
 
     internal lateinit var camera: OrthographicCamera
 
@@ -50,11 +50,17 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         val width = Gdx.graphics.width / 6f
         val height = width * .6f
 
+        val assets = AssetManager()
+        assets.load<TextureAtlas>("kship2.pack", TextureAtlas::class.java)
+        assets.load<TextureAtlas>("thrust.pack", TextureAtlas::class.java)
+        assets.finishLoading()
 
-        val kship = Ship("kship2.pack", Vector2(width, height))
+        val kship = Ship(assets.get("kship2.pack"), Vector2(width, height))
         kship.pos = Vector3((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat(), 0f)
         kship.accel = thrust_accel
-        actors!!.add(kship)
+        actors.add(kship)
+
+        particleAtlas = assets.get("thrust.pack")
 
     }
 
@@ -64,29 +70,37 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
 
         batch!!.begin()
 
-        actors?.forEach {
+        val toAdd = ArrayList<Any>()
+
+        actors.forEach {
             if (it is Dynamic) {
                 it.update(Gdx.graphics.deltaTime)
             }
 
-            if (it is Viewable && it is Plotted) {
+            if (it is VisiblyThrusted && it.generateThrust(particleAtlas) != null) {
+                toAdd.add(it.generateThrust(particleAtlas)!!)
+            }
+
+            if (it is Viewable && it is Plotted && it.getView() != null) {
+
+                batch!!.setColor(1f,1f,1f, (it as? DynamicVisibility)?.getOpacity() ?: 1f)
+
                 batch!!.draw(it.getView(),
                         it.getPosition().x, it.getPosition().y,
                         it.getSize().x / 2f, it.getSize().y / 2f,
                         it.getSize().x, it.getSize().y,
                         1f, 1f,
                         it.getPosition().z)
-            }
 
+               batch!!.setColor(1f,1f,1f,1f)
+            }
         }
 
         batch!!.end()
 
-    }
+        actors.addAll(toAdd)
+        actors.removeAll { it is Mortal && it.isDead() }
 
-    private fun thrustParticlesForShip(ship: Ship): ArrayList<ThrustParticle>? {
-        //ThrustParticle left = new ThrustParticle()
-        return null
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {

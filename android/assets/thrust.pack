@@ -1,0 +1,26 @@
+
+thrust1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+thrust-r
+  rotate: false
+  xy: 2, 2
+  size: 329, 197
+  orig: 329, 197
+  offset: 0, 0
+  index: -1
+thrust-lr
+  rotate: false
+  xy: 333, 2
+  size: 329, 197
+  orig: 329, 197
+  offset: 0, 0
+  index: -1
+thrust-l
+  rotate: false
+  xy: 664, 2
+  size: 329, 197
+  orig: 329, 197
+  offset: 0, 0
+  index: -1

@@ -11,8 +11,7 @@ import com.badlogic.gdx.utils.Array
  * Created by Calm on 5/24/2017.
  */
 
-class Ship: Viewable, Controllable, Dynamic, Plotted, Motile  {
-
+class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted  {
     private lateinit var sprite_lr: TextureAtlas.AtlasRegion
     private lateinit var sprite_l: TextureAtlas.AtlasRegion
     private lateinit var sprite_r: TextureAtlas.AtlasRegion
@@ -45,52 +44,12 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile  {
     private var controllerInput: ControllerInput? = null
 
     constructor(
-            spriteSheetFileName: String,
+            atlas: TextureAtlas,
             dimensions: Vector2) {
-        load(spriteSheetFileName)
+        load(atlas)
         dim = dimensions
 
 
-    }
-
-    override fun load(spriteSheet: String) {
-        val assets = AssetManager()
-        assets.load<TextureAtlas>(spriteSheet, TextureAtlas::class.java)
-        assets.finishLoading()
-
-        val kshipAtlas: TextureAtlas = assets.get(spriteSheet)
-        var kshipSprites: Array<TextureAtlas.AtlasRegion> = kshipAtlas.regions
-
-        sprite_r = kshipSprites.get(0)
-        sprite_n = kshipSprites.get(1)
-        sprite_l = kshipSprites.get(2)
-        sprite_lr = kshipSprites.get(3)
-    }
-
-
-    /* Viewable */
-    override fun getView(): TextureAtlas.AtlasRegion {
-        return sprite_current?: sprite_n
-    }
-
-    /* Controllable */
-    override fun receiveInput(input: ControllerInput) {
-        controllerInput = input
-    }
-
-    /* Dynamic */
-    override fun update(delta: Float) {
-        // Do math update velocity, position, sprite
-
-        sprite_current = sprite_n
-
-        controllerInput?.let {
-            sprite_current = spriteFor(it)
-            val thrustDelta = thrustVectorFor(it, accel)
-            setVelocity(getVelocity().add(thrustDelta.scl(delta)))
-        }
-
-        setPosition(getPosition().add(getVelocity()))
     }
 
     private fun thrustVectorFor(input: ControllerInput, thrustAccel: Float): Vector3 {
@@ -118,6 +77,52 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile  {
         return sprite_n
     }
 
+    fun thrustForInput(input: ControllerInput?): ThrustParticle.Thrust? {
+        input?.let {
+            if (input.left && input.right)
+                return ThrustParticle.Thrust.Both
+            else if (input.left || input.right)
+                return if (input.left) ThrustParticle.Thrust.Left else ThrustParticle.Thrust.Right
+        }
+
+        return null
+    }
+
+    override fun load(spriteSheet: TextureAtlas) {
+
+        var kshipSprites: Array<TextureAtlas.AtlasRegion> = spriteSheet.regions
+
+        sprite_r = kshipSprites.get(0)
+        sprite_n = kshipSprites.get(1)
+        sprite_l = kshipSprites.get(2)
+        sprite_lr = kshipSprites.get(3)
+    }
+
+    /* Viewable */
+    override fun getView(): TextureAtlas.AtlasRegion {
+        return sprite_current?: sprite_n
+    }
+
+    /* Controllable */
+    override fun receiveInput(input: ControllerInput) {
+        controllerInput = input
+    }
+
+    /* Dynamic */
+    override fun update(delta: Float) {
+        // Do math update velocity, position, sprite
+
+        sprite_current = sprite_n
+
+        controllerInput?.let {
+            sprite_current = spriteFor(it)
+            val thrustDelta = thrustVectorFor(it, accel)
+            setVelocity(getVelocity().add(thrustDelta.scl(delta)))
+        }
+
+        setPosition(getPosition().add(getVelocity()))
+    }
+
     /* Plotted */
     override fun getPosition(): Vector3 {
         return pos
@@ -142,5 +147,13 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile  {
 
     override fun setAcceleration(acceleration: Float) {
         accel = acceleration
+    }
+
+    override fun generateThrust(atlas: TextureAtlas): ThrustParticle? {
+        return thrustForInput(controllerInput)?.let {
+            val particle = ThrustParticle(Vector2(dim), it, atlas)
+            particle.setPosition(Vector3(pos))
+            particle
+        }
     }
 }

@@ -9,49 +9,47 @@ import com.badlogic.gdx.utils.Array
 /**
  * Created by Brad on 11/5/17.
  */
-class ThrustParticle: Viewable, Dynamic, Mortal, Plotted {
+class ThrustParticle: Viewable, Dynamic, Mortal, Plotted, DynamicVisibility {
 
     var dim = Vector2()
-
     var initialDim = Vector2()
-
     var life: Int = 0
     var initialLife: Int = 0
     var pos = Vector3()
+    var thrust: Thrust?
 
-    lateinit var sprite: TextureAtlas.AtlasRegion
+    lateinit var particleSprites: Array<TextureAtlas.AtlasRegion>
 
+    enum class Thrust(val index: Int) {
+        Left(2),
+        Right(0),
+        Both(1)
+    }
 
-    constructor(spriteFilename: String, size: Vector2, lifetime: Int = 100) {
-        load(spriteFilename)
+    constructor(size: Vector2, thrust: Thrust, atlas: TextureAtlas, lifetime: Int = 100) {
+        load(atlas)
         dim = size
         initialDim = size
         life = lifetime
+        initialLife = lifetime
+        this.thrust = thrust
     }
 
-    override fun load(spriteSheet: String) {
-        val assets = AssetManager()
-        assets.load<TextureAtlas>(spriteSheet, TextureAtlas::class.java)
-        assets.finishLoading()
-
-        val particleAtlas: TextureAtlas = assets.get(spriteSheet)
-        var particleSprites: Array<TextureAtlas.AtlasRegion> = particleAtlas.regions
-
-        sprite = particleSprites.get(0)
+    override fun load(atlas: TextureAtlas) {
+        particleSprites = atlas.regions
     }
 
-    override fun getView(): TextureAtlas.AtlasRegion {
-        return sprite
+    override fun getView(): TextureAtlas.AtlasRegion? {
+        return thrust?.let { particleSprites[it.index] }
     }
 
     override fun update(delta: Float) {
         // slowly kill off the poor lil fella
-        dim.sub(1f,1f)
-        life - 1
+        life -= 1
     }
 
     override fun isDead(): Boolean {
-        return life > 0
+        return life < 1
     }
 
     override fun getPosition(): Vector3 {
@@ -63,7 +61,10 @@ class ThrustParticle: Viewable, Dynamic, Mortal, Plotted {
     }
 
     override fun getSize(): Vector2 {
-        if (initialLife == 0) return dim
-        return dim.scl(life.toFloat()/initialLife.toFloat())
+        return dim
+    }
+
+    override fun getOpacity(): Float {
+        return life.toFloat()/initialLife.toFloat()
     }
 }

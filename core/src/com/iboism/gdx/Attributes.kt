@@ -8,8 +8,8 @@ import com.badlogic.gdx.math.Vector3
  * Created by Brad on 11/3/2017.
  */
 interface Viewable {
-    fun load(spriteSheet: String)
-    fun getView(): TextureAtlas.AtlasRegion
+    fun load(spriteSheet: TextureAtlas)
+    fun getView(): TextureAtlas.AtlasRegion?
 }
 
 interface Controllable {
@@ -34,4 +34,12 @@ interface Motile {
 
 interface Mortal {
     fun isDead(): Boolean
+}
+
+interface VisiblyThrusted {
+    fun generateThrust(atlas: TextureAtlas): ThrustParticle?
+}
+
+interface DynamicVisibility {
+    fun getOpacity(): Float
 }
