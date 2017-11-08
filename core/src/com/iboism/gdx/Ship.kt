@@ -1,8 +1,6 @@
 package com.iboism.gdx
 
-import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
@@ -17,7 +15,9 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted  {
     private lateinit var sprite_r: TextureAtlas.AtlasRegion
     private lateinit var sprite_n: TextureAtlas.AtlasRegion
 
-    private var sprite_current: TextureAtlas.AtlasRegion? = null
+    private var spriteCurrent: TextureAtlas.AtlasRegion? = null
+
+    private lateinit var thrustAtlas: TextureAtlas
 
     /* SHIP VALUES */
 
@@ -100,7 +100,7 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted  {
 
     /* Viewable */
     override fun getView(): TextureAtlas.AtlasRegion {
-        return sprite_current?: sprite_n
+        return spriteCurrent ?: sprite_n
     }
 
     /* Controllable */
@@ -112,10 +112,10 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted  {
     override fun update(delta: Float) {
         // Do math update velocity, position, sprite
 
-        sprite_current = sprite_n
+        spriteCurrent = sprite_n
 
         controllerInput?.let {
-            sprite_current = spriteFor(it)
+            spriteCurrent = spriteFor(it)
             val thrustDelta = thrustVectorFor(it, accel)
             setVelocity(getVelocity().add(thrustDelta.scl(delta)))
         }
@@ -149,9 +149,13 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted  {
         accel = acceleration
     }
 
-    override fun generateThrust(atlas: TextureAtlas): ThrustParticle? {
+    override fun setThrustSprites(atlas: TextureAtlas) {
+        thrustAtlas = atlas
+    }
+
+    override fun generateThrust(): ThrustParticle? {
         return thrustForInput(controllerInput)?.let {
-            val particle = ThrustParticle(Vector2(dim), it, atlas)
+            val particle = ThrustParticle(Vector2(dim), it, thrustAtlas)
             particle.setPosition(Vector3(pos))
             particle
         }

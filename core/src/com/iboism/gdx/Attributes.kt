@@ -37,7 +37,8 @@ interface Mortal {
 }
 
 interface VisiblyThrusted {
-    fun generateThrust(atlas: TextureAtlas): ThrustParticle?
+    fun generateThrust(): ThrustParticle?
+    fun setThrustSprites(atlas: TextureAtlas)
 }
 
 interface DynamicVisibility {

@@ -23,7 +23,6 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
     //stuff that shouldn't be here
     private var isLeftThusting = false
     private var isRightThrusting = false
-    private lateinit var particleAtlas: TextureAtlas
 
     private val actors = ArrayList<Any>()
 
@@ -58,9 +57,8 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         val kship = Ship(assets.get("kship2.pack"), Vector2(width, height))
         kship.pos = Vector3((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat(), 0f)
         kship.accel = thrust_accel
+        kship.setThrustSprites(assets.get("thrust.pack"))
         actors.add(kship)
-
-        particleAtlas = assets.get("thrust.pack")
 
     }
 
@@ -77,8 +75,8 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
                 it.update(Gdx.graphics.deltaTime)
             }
 
-            if (it is VisiblyThrusted && it.generateThrust(particleAtlas) != null) {
-                toAdd.add(it.generateThrust(particleAtlas)!!)
+            if (it is VisiblyThrusted && it.generateThrust() != null) {
+                toAdd.add(it.generateThrust()!!)
             }
 
             if (it is Viewable && it is Plotted && it.getView() != null) {
