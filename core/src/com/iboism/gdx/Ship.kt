@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array
  * Created by Calm on 5/24/2017.
  */
 
-class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted  {
+class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, MainCharacter  {
     private lateinit var sprite_lr: TextureAtlas.AtlasRegion
     private lateinit var sprite_l: TextureAtlas.AtlasRegion
     private lateinit var sprite_r: TextureAtlas.AtlasRegion
@@ -130,6 +130,10 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted  {
 
     override fun setPosition(position: Vector3) {
         pos = position
+    }
+
+    override fun getCenter(): Vector2 {
+        return Vector2(pos.x + dim.x/2, pos.y + dim.y/2)
     }
 
     override fun getSize(): Vector2 {

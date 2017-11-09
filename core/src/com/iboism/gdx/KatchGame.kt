@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.utils.Array
+import sun.applet.Main
 
 import java.util.ArrayList
 
@@ -59,13 +60,12 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         kship.accel = thrust_accel
         kship.setThrustSprites(assets.get("thrust.pack"))
         actors.add(kship)
-
     }
 
     override fun render() {
         Gdx.gl.glClearColor(.5f, .5f, .5f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-
+        batch!!.projectionMatrix = camera.combined
         batch!!.begin()
 
         val toAdd = ArrayList<Any>()
@@ -92,11 +92,17 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
 
                batch!!.setColor(1f,1f,1f,1f)
             }
-        }
 
+            if (it is MainCharacter) {
+                camera.position.set(it.getCenter().x,it.getCenter().y,0f)
+            }
+        }
+        camera.update()
         batch!!.end()
 
-        actors.addAll(toAdd)
+
+
+        actors.addAll(0, toAdd)
         actors.removeAll { it is Mortal && it.isDead() }
 
     }

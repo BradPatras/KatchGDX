@@ -44,3 +44,7 @@ interface VisiblyThrusted {
 interface DynamicVisibility {
     fun getOpacity(): Float
 }
+
+interface MainCharacter {
+    fun getCenter(): Vector2
+}
