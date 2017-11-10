@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
@@ -24,6 +25,7 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
     //stuff that shouldn't be here
     private var isLeftThusting = false
     private var isRightThrusting = false
+    private lateinit var background: TextureRegion
 
     private val actors = ArrayList<Any>()
 
@@ -60,6 +62,12 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         kship.accel = thrust_accel
         kship.setThrustSprites(assets.get("thrust.pack"))
         actors.add(kship)
+
+        val bk = Texture("pixelspacebig2.png")
+        bk.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+        background = TextureRegion(bk)
+        background.setRegion(0, 0, bk.width * 100, bk.height * 100)
+
     }
 
     override fun render() {
@@ -67,6 +75,8 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         batch!!.projectionMatrix = camera.combined
         batch!!.begin()
+
+        batch!!.draw(background, -Gdx.graphics.width.toFloat(), -Gdx.graphics.height.toFloat(), background.regionWidth * 5f, background.regionHeight * 5f)
 
         val toAdd = ArrayList<Any>()
 
@@ -100,11 +110,8 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         camera.update()
         batch!!.end()
 
-
-
         actors.addAll(0, toAdd)
         actors.removeAll { it is Mortal && it.isDead() }
-
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
