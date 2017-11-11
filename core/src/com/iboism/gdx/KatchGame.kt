@@ -27,9 +27,6 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
     private var isRightThrusting = false
     private lateinit var background: TextureRegion
 
-    private val CAMERA_ZOOM_MIN = 1f
-    private val CAMERA_ZOOM_MAX = 1.25f
-
     private val actors = ArrayList<Any>()
 
     internal lateinit var camera: OrthographicCamera
@@ -39,6 +36,10 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
     internal var game_width: Float = 0.toFloat()
 
     internal var thrust_accel = 5f
+
+    private val CAMERA_ZOOM_MIN = 1f
+    private val CAMERA_ZOOM_MAX = 2.5f
+    private val CAMERA_ZOOM_THRESHOLD = thrust_accel * 5.5f
 
     override fun create() {
         Gdx.input.inputProcessor = this
@@ -110,10 +111,17 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
 
             if (it is MainCharacter) {
                 camera.position.set(it.getCenter().x,it.getCenter().y,0f)
-                var speedZoom = CAMERA_ZOOM_MIN + (it.getVelocity().len2() / 1000f)
-                camera.zoom = if(speedZoom > CAMERA_ZOOM_MAX) CAMERA_ZOOM_MAX else speedZoom
+
+                if (it.getVelocity().len() > CAMERA_ZOOM_THRESHOLD) {
+                    var speedZoom = CAMERA_ZOOM_MIN + (it.getVelocity().len() - CAMERA_ZOOM_THRESHOLD) / 30f
+                    camera.zoom = speedZoom //if (speedZoom > CAMERA_ZOOM_MAX) CAMERA_ZOOM_MAX else speedZoom
+                }
+
+                Gdx.app.log("info", "Camera zoom: " + camera.zoom)
+                Gdx.app.log("info", "Ship Velocity: " + it.getVelocity().len())
             }
         }
+
         camera.update()
         batch!!.end()
 
