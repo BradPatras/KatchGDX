@@ -27,6 +27,9 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
     private var isRightThrusting = false
     private lateinit var background: TextureRegion
 
+    private val CAMERA_ZOOM_MIN = 1f
+    private val CAMERA_ZOOM_MAX = 1.25f
+
     private val actors = ArrayList<Any>()
 
     internal lateinit var camera: OrthographicCamera
@@ -45,11 +48,12 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         game_width = Gdx.graphics.width.toFloat()
 
         camera = OrthographicCamera(game_width, game_height)
+        camera.zoom = CAMERA_ZOOM_MIN
 
         /*
 		generate dimensions based on screen size
 		 */
-        val width = Gdx.graphics.width / 6f
+        val width = Gdx.graphics.width / 8f
         val height = width * .6f
 
         val assets = AssetManager()
@@ -67,6 +71,7 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         bk.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
         background = TextureRegion(bk)
         background.setRegion(0, 0, bk.width * 100, bk.height * 100)
+
 
     }
 
@@ -105,6 +110,8 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
 
             if (it is MainCharacter) {
                 camera.position.set(it.getCenter().x,it.getCenter().y,0f)
+                var speedZoom = CAMERA_ZOOM_MIN + (it.getVelocity().len2() / 1000f)
+                camera.zoom = if(speedZoom > CAMERA_ZOOM_MAX) CAMERA_ZOOM_MAX else speedZoom
             }
         }
         camera.update()
