@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array
  * Created by Calm on 5/24/2017.
  */
 
-class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, MainCharacter  {
+class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, MainCharacter, FlightAssistEquipped {
     private lateinit var sprite_lr: TextureAtlas.AtlasRegion
     private lateinit var sprite_l: TextureAtlas.AtlasRegion
     private lateinit var sprite_r: TextureAtlas.AtlasRegion
@@ -114,13 +114,29 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, M
 
         spriteCurrent = sprite_n
 
+
+
         controllerInput?.let {
             spriteCurrent = spriteFor(it)
             val thrustDelta = thrustVectorFor(it, accel)
             setVelocity(getVelocity().add(thrustDelta.scl(delta)))
+
+            //Flight assist: kill rotational velocity if either both or neither thrusters activated
+            if ((it.left && it.right) || !(it.left || it.right)) {
+                scaleRotation(.98f)
+            }
         }
 
+
+
         setPosition(getPosition().add(getVelocity()))
+    }
+
+    private fun scaleRotation(scalar: Float) {
+        var velocity = getVelocity()
+
+        velocity.z = velocity.z * scalar
+        setVelocity(velocity)
     }
 
     /* Plotted */

@@ -49,3 +49,5 @@ interface MainCharacter {
     fun getCenter(): Vector2
     fun getVelocity(): Vector3
 }
+
+interface FlightAssistEquipped
