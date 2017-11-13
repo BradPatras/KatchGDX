@@ -29,13 +29,13 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
 
     private val actors = ArrayList<Any>()
 
-    internal lateinit var camera: OrthographicCamera
+    private lateinit var camera: OrthographicCamera
 
     /* GAME STUFF */
-    internal var game_height: Float = 0.toFloat()
-    internal var game_width: Float = 0.toFloat()
+    private var game_height: Float = 0.toFloat()
+    private var game_width: Float = 0.toFloat()
 
-    internal var thrust_accel = 5f
+    private var thrust_accel = 5f
 
     private val CAMERA_ZOOM_MIN = 1f
     private val CAMERA_ZOOM_MAX = 2.5f
@@ -138,8 +138,11 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
             isRightThrusting = true
         }
 
-        actors?.filter { it is Controllable }
-                ?.forEach { (it as Controllable).receiveInput(ControllerInput(isLeftThusting, isRightThrusting, false)) }
+        actors.filter {
+            it is Controllable
+        }.forEach {
+            (it as Controllable).receiveInput(ControllerInput(isLeftThusting, isRightThrusting, false))
+        }
 
         return false
     }
@@ -153,8 +156,11 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
             isRightThrusting = false
         }
 
-        actors?.filter { it is Controllable }
-                ?.forEach { (it as Controllable).receiveInput(ControllerInput(isLeftThusting, isRightThrusting, false)) }
+        actors.filter {
+            it is Controllable
+        }.forEach {
+            (it as Controllable).receiveInput(ControllerInput(isLeftThusting, isRightThrusting, false))
+        }
 
         return false
     }

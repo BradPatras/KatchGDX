@@ -3,6 +3,7 @@ package com.iboism.gdx
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.utils.Array
 
 /**
@@ -48,8 +49,6 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, M
             dimensions: Vector2) {
         load(atlas)
         dim = dimensions
-
-
     }
 
     private fun thrustVectorFor(input: ControllerInput, thrustAccel: Float): Vector3 {
@@ -110,12 +109,7 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, M
 
     /* Dynamic */
     override fun update(delta: Float) {
-        // Do math update velocity, position, sprite
-
         spriteCurrent = sprite_n
-
-
-
         controllerInput?.let {
             spriteCurrent = spriteFor(it)
             val thrustDelta = thrustVectorFor(it, accel)
@@ -126,8 +120,6 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, M
                 scaleRotation(.98f)
             }
         }
-
-
 
         setPosition(getPosition().add(getVelocity()))
     }
