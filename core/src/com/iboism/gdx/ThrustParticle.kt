@@ -23,7 +23,8 @@ class ThrustParticle: Viewable, Dynamic, Mortal, Plotted, DynamicVisibility {
     enum class Thrust(val index: Int) {
         Left(2),
         Right(0),
-        Both(1)
+        Both(1),
+        None(3)
     }
 
     constructor(size: Vector2, thrust: Thrust, atlas: TextureAtlas, lifetime: Int = 100) {

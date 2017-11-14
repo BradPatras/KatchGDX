@@ -1,0 +1,12 @@
+
+besucher1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+besucher
+  rotate: false
+  xy: 2, 2
+  size: 256, 143
+  orig: 256, 143
+  offset: 0, 0
+  index: -1

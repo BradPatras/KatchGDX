@@ -60,14 +60,27 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         val assets = AssetManager()
         assets.load<TextureAtlas>("kship2.pack", TextureAtlas::class.java)
         assets.load<TextureAtlas>("thrust.pack", TextureAtlas::class.java)
+        assets.load<TextureAtlas>("besucher.pack", TextureAtlas::class.java)
+        assets.load<TextureAtlas>("bthrust.pack", TextureAtlas::class.java)
         assets.finishLoading()
 
+        // kShip
         val kship = Ship(assets.get("kship2.pack"), Vector2(width, height))
-        kship.pos = Vector3((Gdx.graphics.width / 2).toFloat(), (Gdx.graphics.height / 2).toFloat(), 0f)
+        kship.pos =  Vector3(2000f, 2000f, 0f)
         kship.accel = thrust_accel
         kship.setThrustSprites(assets.get("thrust.pack"))
         actors.add(kship)
 
+        // besucher
+        val bHeight = height * 1.5f
+        val bWidth = bHeight * 1.8f
+        val besucher = Besucher(assets.get("besucher.pack"), Vector2(bWidth, bHeight))
+        besucher.pos = Vector3(3000f, 3000f, 0f)
+        besucher.accel = thrust_accel * 1.25f
+        besucher.setThrustSprites(assets.get("bthrust.pack"))
+        actors.add(besucher)
+
+        // background
         val bk = Texture("pixelspacebig2.png")
         bk.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
         background = TextureRegion(bk)
@@ -117,8 +130,7 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
                     camera.zoom = speedZoom //if (speedZoom > CAMERA_ZOOM_MAX) CAMERA_ZOOM_MAX else speedZoom
                 }
 
-                Gdx.app.log("info", "Camera zoom: " + camera.zoom)
-                Gdx.app.log("info", "Ship Velocity: " + it.getVelocity().len())
+               // Gdx.app.log("info", "Ship Position: (" + it.getCenter().x + ", " + it.getCenter().y + ")")
             }
         }
 

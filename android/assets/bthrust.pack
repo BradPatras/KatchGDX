@@ -1,0 +1,33 @@
+
+bthrust.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+thrustr
+  rotate: false
+  xy: 2, 292
+  size: 256, 143
+  orig: 256, 143
+  offset: 0, 0
+  index: -1
+thrustb
+  rotate: false
+  xy: 2, 147
+  size: 256, 143
+  orig: 256, 143
+  offset: 0, 0
+  index: -1
+thrustl
+  rotate: false
+  xy: 2, 437
+  size: 256, 143
+  orig: 256, 143
+  offset: 0, 0
+  index: -1
+thrustn
+  rotate: false
+  xy: 2, 2
+  size: 256, 143
+  orig: 256, 143
+  offset: 0, 0
+  index: -1
