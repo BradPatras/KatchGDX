@@ -1,0 +1,45 @@
+
+besucher2thrustt1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+besucher2thrust-rt
+  rotate: false
+  xy: 0, 0
+  size: 204, 204
+  orig: 204, 204
+  offset: 0, 0
+  index: -1
+besucher2thrust-lrt
+  rotate: false
+  xy: 0, 618
+  size: 204, 204
+  orig: 204, 204
+  offset: 0, 0
+  index: -1
+besucher2thrust-lt
+  rotate: false
+  xy: 0, 412
+  size: 204, 204
+  orig: 204, 204
+  offset: 0, 0
+  index: -1
+besucher2thrust-nt
+  rotate: false
+  xy: 0, 206
+  size: 204, 204
+  orig: 204, 204
+  offset: 0, 0
+  index: -1
+
+pack1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+besucher2thrustt1
+  rotate: false
+  xy: 0, 0
+  size: 256, 1024
+  orig: 256, 1024
+  offset: 0, 0
+  index: -1

@@ -1,0 +1,33 @@
+
+besucher21.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+besucher2-r
+  rotate: false
+  xy: 2, 2
+  size: 204, 204
+  orig: 204, 204
+  offset: 0, 0
+  index: -1
+besucher2-n
+  rotate: false
+  xy: 2, 208
+  size: 204, 204
+  orig: 204, 204
+  offset: 0, 0
+  index: -1
+besucher2-l
+  rotate: false
+  xy: 2, 620
+  size: 204, 204
+  orig: 204, 204
+  offset: 0, 0
+  index: -1
+besucher2-lr
+  rotate: false
+  xy: 2, 414
+  size: 204, 204
+  orig: 204, 204
+  offset: 0, 0
+  index: -1

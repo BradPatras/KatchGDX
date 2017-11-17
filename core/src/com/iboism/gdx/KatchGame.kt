@@ -60,8 +60,8 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         val assets = AssetManager()
         assets.load<TextureAtlas>("kship2.pack", TextureAtlas::class.java)
         assets.load<TextureAtlas>("thrust.pack", TextureAtlas::class.java)
-        assets.load<TextureAtlas>("besucher.pack", TextureAtlas::class.java)
-        assets.load<TextureAtlas>("bthrust.pack", TextureAtlas::class.java)
+        assets.load<TextureAtlas>("besucher2.pack", TextureAtlas::class.java)
+        assets.load<TextureAtlas>("besucherthrustt2.pack", TextureAtlas::class.java)
         assets.finishLoading()
 
         // kShip
@@ -73,11 +73,11 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
 
         // besucher
         val bHeight = height * 1.5f
-        val bWidth = bHeight * 1.8f
-        val besucher = Besucher(assets.get("besucher.pack"), Vector2(bWidth, bHeight))
+        val bWidth = bHeight
+        val besucher = Besucher(assets.get("besucher2.pack"), Vector2(bWidth, bHeight))
         besucher.pos = Vector3(3000f, 3000f, 0f)
-        besucher.accel = thrust_accel * 1.25f
-        besucher.setThrustSprites(assets.get("bthrust.pack"))
+        besucher.accel = thrust_accel * .5f
+        besucher.setThrustSprites(assets.get("besucherthrustt2.pack"))
         actors.add(besucher)
 
         // background

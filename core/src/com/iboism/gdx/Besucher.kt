@@ -1,7 +1,6 @@
 package com.iboism.gdx
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
@@ -35,7 +34,7 @@ class Besucher(
     /*
     Velocity
      */
-    var vel: Vector3 = Vector3(0f,10f,6f)
+    var vel: Vector3 = Vector3(0f,0f,-.02f)
 
     /*
     Acceleration
@@ -54,6 +53,15 @@ class Besucher(
     }
 
     override fun update(delta: Float) {
+        val radians = getPosition().z * Math.PI.toFloat() / 180f
+        var tv = Vector3()
+
+        tv.z = 0f
+        tv.x = -(accel / 7f) * Math.sin(radians.toDouble()).toFloat()
+        tv.y = accel / 7f * Math.cos(radians.toDouble()).toFloat()
+
+        setVelocity(getVelocity().add(tv.scl(delta)))
+
         setPosition(getPosition().add(getVelocity()))
     }
 
@@ -93,7 +101,7 @@ class Besucher(
     }
 
     private fun nextThrust() : ThrustParticle.Thrust {
-        return ThrustParticle.Thrust.None
+        return ThrustParticle.Thrust.Both
     }
 
     init {
