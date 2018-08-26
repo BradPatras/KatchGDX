@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.input.GestureDetector
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.InputListener
@@ -34,6 +35,8 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
     /* GAME STUFF */
     private var game_height: Float = 0.toFloat()
     private var game_width: Float = 0.toFloat()
+
+    private var world_rect: Rectangle = Rectangle()
 
     private var thrust_accel = 5f
 
@@ -64,29 +67,28 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         assets.load<TextureAtlas>("besucherthrustt2.pack", TextureAtlas::class.java)
         assets.finishLoading()
 
-        // kShip
-        val kship = Ship(assets.get("kship2.pack"), Vector2(width, height))
-        kship.pos =  Vector3(2000f, 2000f, 0f)
-        kship.accel = thrust_accel
-        kship.setThrustSprites(assets.get("thrust.pack"))
-        actors.add(kship)
-
-        // besucher
-        val bHeight = height * 1.5f
-        val bWidth = bHeight
-        val besucher = Besucher(assets.get("besucher2.pack"), Vector2(bWidth, bHeight))
-        besucher.pos = Vector3(3000f, 3000f, 0f)
-        besucher.accel = thrust_accel * .5f
-        besucher.setThrustSprites(assets.get("besucherthrustt2.pack"))
-        actors.add(besucher)
-
         // background
         val bk = Texture("pixelspacebig2.png")
         bk.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
         background = TextureRegion(bk)
         background.setRegion(0, 0, bk.width * 100, bk.height * 100)
+        world_rect = Rectangle(0f, 0f, bk.width * 100f, bk.height * 100f)
+        val worldC = world_rect.getCenter(Vector2.Zero)
 
+        // besucher
+        val bHeight = height * 1.5f
+        val bWidth = bHeight
+        val besucher = Besucher(assets.get("besucher2.pack"), Vector2(bWidth, bHeight))
+        besucher.pos = Vector3(worldC.x, worldC.y - bHeight * 2, 0f)
+        besucher.setThrustSprites(assets.get("besucherthrustt2.pack"))
+        actors.add(besucher)
 
+        // kShip
+        val kship = Ship(assets.get("kship2.pack"), Vector2(width, height))
+        kship.pos =  Vector3(worldC.x, worldC.y, 0f)
+        kship.accel = thrust_accel
+        kship.setThrustSprites(assets.get("thrust.pack"))
+        actors.add(kship)
     }
 
     override fun render() {
@@ -200,4 +202,8 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
     override fun scrolled(amount: Int): Boolean {
         return false
     }
+}
+
+fun Rectangle.getCenter(): Vector2 {
+    return this.getCenter(Vector2.Zero)
 }

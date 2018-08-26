@@ -34,7 +34,7 @@ class Besucher(
     /*
     Velocity
      */
-    var vel: Vector3 = Vector3(0f,0f,-.02f)
+    var vel: Vector3 = Vector3(0f,0.5f,0f)
 
     /*
     Acceleration

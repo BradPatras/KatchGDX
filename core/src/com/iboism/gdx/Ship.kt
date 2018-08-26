@@ -116,9 +116,9 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, M
             setVelocity(getVelocity().add(thrustDelta.scl(delta)))
 
             //Flight assist: kill rotational velocity if either both or neither thrusters activated
-            if ((it.left && it.right) || !(it.left || it.right)) {
-                scaleRotation(.98f)
-            }
+//            if ((it.left && it.right) || !(it.left || it.right)) {
+//                scaleRotation(.98f)
+//            }
         }
 
         setPosition(getPosition().add(getVelocity()))
