@@ -152,11 +152,10 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
             isRightThrusting = true
         }
 
-        actors.filter {
-            it is Controllable
-        }.forEach {
-            (it as Controllable).receiveInput(ControllerInput(isLeftThusting, isRightThrusting, false))
-        }
+        actors.filterIsInstance<Controllable>()
+                .forEach {
+                    it.receiveInput(ControllerInputCreator(isLeftThusting, isRightThrusting, false).create())
+                }
 
         return false
     }
@@ -170,10 +169,8 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
             isRightThrusting = false
         }
 
-        actors.filter {
-            it is Controllable
-        }.forEach {
-            (it as Controllable).receiveInput(ControllerInput(isLeftThusting, isRightThrusting, false))
+        actors.filterIsInstance<Controllable>().forEach {
+            it.receiveInput(ControllerInputCreator(isLeftThusting, isRightThrusting, false).create())
         }
 
         return false

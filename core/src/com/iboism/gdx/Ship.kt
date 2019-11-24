@@ -3,7 +3,6 @@ package com.iboism.gdx
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.utils.Array
 
 /**
@@ -11,14 +10,16 @@ import com.badlogic.gdx.utils.Array
  */
 
 class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, MainCharacter, FlightAssistEquipped {
-    private lateinit var sprite_lr: TextureAtlas.AtlasRegion
-    private lateinit var sprite_l: TextureAtlas.AtlasRegion
-    private lateinit var sprite_r: TextureAtlas.AtlasRegion
-    private lateinit var sprite_n: TextureAtlas.AtlasRegion
+    lateinit var sprite_lr: TextureAtlas.AtlasRegion
+    lateinit var sprite_l: TextureAtlas.AtlasRegion
+    lateinit var sprite_r: TextureAtlas.AtlasRegion
+    lateinit var sprite_n: TextureAtlas.AtlasRegion
 
-    private var spriteCurrent: TextureAtlas.AtlasRegion? = null
+    var spriteCurrent: TextureAtlas.AtlasRegion? = null
 
     private lateinit var thrustAtlas: TextureAtlas
+
+    private var state: ShipState = ShipIdleState()
 
     /* SHIP VALUES */
 
@@ -51,15 +52,15 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, M
         dim = dimensions
     }
 
-    private fun thrustVectorFor(input: ControllerInput, thrustAccel: Float): Vector3 {
-        if (!input.left && !input.right) return Vector3()
+    private fun thrustVectorFor(state: ShipState, thrustAccel: Float): Vector3 {
+        if (state is ShipIdleState) return Vector3()
         val radians = getPosition().z * Math.PI.toFloat() / 180f
         var tv = Vector3()
-        if (input.right && input.left) {
+        if (state is ShipBothThrustState) {
             tv.x = -thrustAccel * Math.sin(radians.toDouble()).toFloat()
             tv.y = thrustAccel * Math.cos(radians.toDouble()).toFloat()
         } else {
-            tv.z = (if (input.left) -thrustAccel else thrustAccel)
+            tv.z = (if (state is ShipLeftThrustState) -thrustAccel else thrustAccel)
             tv.x = -(thrustAccel / 7f) * Math.sin(radians.toDouble()).toFloat()
             tv.y = thrustAccel / 7f * Math.cos(radians.toDouble()).toFloat()
         }
@@ -67,22 +68,13 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, M
         return tv
     }
 
-    private fun spriteFor(input: ControllerInput): TextureAtlas.AtlasRegion? {
-        if (input.right && input.left)
-            return sprite_lr
-        else if (input.right || input.left)
-            return if (input.left) sprite_l else sprite_r
-
-        return sprite_n
-    }
-
-    fun thrustForInput(input: ControllerInput?): ThrustParticle.Thrust? {
-        input?.let {
-            if (input.left && input.right)
-                return ThrustParticle.Thrust.Both
-            else if (input.left || input.right)
-                return if (input.left) ThrustParticle.Thrust.Left else ThrustParticle.Thrust.Right
-        }
+    fun thrustForInput(state: ShipState): ThrustParticle.Thrust? {
+        if (state is ShipBothThrustState)
+            return ThrustParticle.Thrust.Both
+        else if (state is ShipLeftThrustState)
+            return ThrustParticle.Thrust.Left
+        else if (state is ShipRightThrustState)
+            return ThrustParticle.Thrust.Right
 
         return null
     }
@@ -111,15 +103,14 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, M
     override fun update(delta: Float) {
         spriteCurrent = sprite_n
         controllerInput?.let {
-            spriteCurrent = spriteFor(it)
-            val thrustDelta = thrustVectorFor(it, accel)
-            setVelocity(getVelocity().add(thrustDelta.scl(delta)))
-
+            state = state.newStateForInput(it)
             //Flight assist: kill rotational velocity if either both or neither thrusters activated
 //            if ((it.left && it.right) || !(it.left || it.right)) {
 //                scaleRotation(.98f)
 //            }
         }
+
+        state.update(this, delta)
 
         setPosition(getPosition().add(getVelocity()))
     }
@@ -166,7 +157,7 @@ class Ship: Viewable, Controllable, Dynamic, Plotted, Motile, VisiblyThrusted, M
     }
 
     override fun generateThrust(): ThrustParticle? {
-        return thrustForInput(controllerInput)?.let {
+        return thrustForInput(state)?.let {
             val particle = ThrustParticle(Vector2(dim), it, thrustAtlas)
             particle.setPosition(Vector3(pos))
             particle
