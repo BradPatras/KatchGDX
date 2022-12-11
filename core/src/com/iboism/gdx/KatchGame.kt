@@ -16,7 +16,6 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.utils.Array
-import sun.applet.Main
 
 import java.util.ArrayList
 
@@ -33,12 +32,12 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
     private lateinit var camera: OrthographicCamera
 
     /* GAME STUFF */
-    private var game_height: Float = 0.toFloat()
-    private var game_width: Float = 0.toFloat()
+    private var game_height: Float = 0f
+    private var game_width: Float = 0f
 
     private var world_rect: Rectangle = Rectangle()
 
-    private var thrust_accel = 5f
+    private var thrust_accel = 8f
 
     private val CAMERA_ZOOM_MIN = 1f
     private val CAMERA_ZOOM_MAX = 2.5f
@@ -131,8 +130,6 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
                     var speedZoom = CAMERA_ZOOM_MIN + (it.getVelocity().len() - CAMERA_ZOOM_THRESHOLD) / 30f
                     camera.zoom = speedZoom //if (speedZoom > CAMERA_ZOOM_MAX) CAMERA_ZOOM_MAX else speedZoom
                 }
-
-               // Gdx.app.log("info", "Ship Position: (" + it.getCenter().x + ", " + it.getCenter().y + ")")
             }
         }
 
@@ -196,7 +193,7 @@ class KatchGame : ApplicationAdapter(), InputProcessor {
         return false
     }
 
-    override fun scrolled(amount: Int): Boolean {
+    override fun scrolled(amountX: Float, amountY: Float): Boolean {
         return false
     }
 }

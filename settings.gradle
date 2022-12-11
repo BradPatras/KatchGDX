@@ -1,1 +1,15 @@
+// This block added to fix this build error that popped up after
+// converting the TrenchRunnerGame class to kotlin.
+//
+// "Build file '/Users/bradpatras/dev/trench-runner/core/build.gradle' line: 2
+// Error resolving plugin [id: 'org.jetbrains.kotlin.jvm', version: '1.8.0-RC']
+// The request for this plugin could not be satisfied because the plugin is
+// already on the classpath with an unknown version, so compatibility
+// cannot be checked."
+pluginManagement {
+    plugins {
+        id 'org.jetbrains.kotlin.jvm' version '1.8.0-RC'
+    }
+}
+
 include 'android', 'core'
